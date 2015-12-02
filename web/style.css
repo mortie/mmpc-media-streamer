@@ -1,0 +1,42 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background-color: #433325;
+	padding: 0px;
+}
+
+.content {
+	width: 90%;
+	max-width: 800px;
+	margin: auto;
+}
+
+#form {
+	color: #eee;
+	margin-top: 48px;
+	padding: 24px;
+	padding-bottom: calc(24px + 30px);
+	background-color: #7A5029;
+	border-radius: 5px;
+	border: 1px solid black;
+}
+
+#form dl {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+#form input {
+	width: 100%;
+}
+
+#form dd {
+	margin-bottom: 24px;
+}
+
+#form button[type=submit] {
+	float: right;
+	height: 30px;
+}
