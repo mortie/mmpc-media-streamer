@@ -1,10 +1,15 @@
+function q() {
+	return document.querySelector.apply(document, arguments);
+}
+
 function error(err) {
 	console.log(err);
 	alert(err);
 }
 
-function q() {
-	return document.querySelector.apply(document, arguments);
+function overlay(content) {
+	q(".overlay").className += " active";
+	q(".overlay .content").innerHTML = content;
 }
 
 function post(url, payload, cb) {
@@ -66,6 +71,6 @@ form.addEventListener("submit", function(evt) {
 		return;
 	}
 
-	alert("Media playback should start shortly.");
+	overlay("Loading...");
 	form.reset();
 });

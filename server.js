@@ -86,7 +86,8 @@ function HttpStreamer(torrentFile) {
 			"Content-Range": "bytes " + start + "-" + end + "/" + total,
 			"Accept-Ranges": "bytes",
 			"Content-Length": chunksize,
-			"Content-Type": mimeType(torrentFile.file.name)
+			"Content-Type": mimeType(torrentFile.file.name),
+			"Icy-Name": torrentFile.file.name
 		});
 
 		var stream = torrentFile.file.createReadStream({start: start, end: end});
@@ -157,11 +158,13 @@ MediaTorrent.prototype.play = function() {
 	//Run player
 	var child = exec(conf.player_command, [
 		"--fullscreen",
+		"--play-and-exit",
 		"-I", "http",
 		"--http-password", conf.player_password,
 		"--http-port", playerPort.val,
 		"--",
-		"http://localhost:"+streamer.port.val
+		"http://localhost:"+streamer.port.val,
+		"vlc://quit"
 	]);
 
 	console.log("player GUI on port "+playerPort.val);
@@ -263,7 +266,9 @@ function playTorrent(source, res) {
 
 		var media = new MediaTorrent(engine);
 		var playerPort = media.play();
-		res.json({redirect: "http://"+conf.host+":"+playerPort.val});
+		setTimeout(function() {
+			res.json({redirect: "http://"+conf.host+":"+playerPort.val});
+		}, 2000);
 	});
 }
 
