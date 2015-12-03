@@ -115,7 +115,7 @@ TorrentFile.prototype.makeFile = function() {
 	}
 }
 TorrentFile.prototype.cleanup = function() {
-	if (this.file) {
+	if (this.path) {
 		fs.unlink(this.path);
 	}
 }
@@ -137,6 +137,7 @@ function MediaTorrent(engine) {
 
 	this.media = new TorrentFile(media);
 	this.subtitles = new TorrentFile(subtitles);
+	this.subtitles.makeFile();
 }
 MediaTorrent.prototype.play = function() {
 	if (!this.media) {
@@ -152,6 +153,7 @@ MediaTorrent.prototype.play = function() {
 	var streamer = new HttpStreamer(this.media);
 
 	console.log("Stream server started on port "+streamer.port.val);
+	console.log(this.subtitles.file);
 
 	var playerPort = portManager.getPort();
 
@@ -162,6 +164,7 @@ MediaTorrent.prototype.play = function() {
 		"-I", "http",
 		"--http-password", conf.player_password,
 		"--http-port", playerPort.val,
+		"--sub-file", this.subtitles.path,
 		"--",
 		"http://localhost:"+streamer.port.val,
 		"vlc://quit"
