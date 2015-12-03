@@ -26,37 +26,8 @@ fs.readdirSync("tmp").forEach(function(file) {
 var portManager = new PortManager(conf.port);
 
 //Initialize web app
-express.static("web");
 var app = express();
-
-//Init static resources
-[
-	["/", "/index.html"],
-	"/style.css",
-	"/script.js"
-].forEach(function(ep) {
-	var path;
-	var file;
-	if (typeof ep == "string") {
-		path = ep;
-		file = ep;
-	} else {
-		path = ep[0];
-		file = ep[1];
-	}
-
-	//Cache static resources in RAM
-	fs.readFile("web"+file, function(err, str) {
-		if (err) throw err;
-
-		app.get(path, function(req, res) {
-			if (err)
-				res.end(err.code+": "+path);
-			else
-				res.end(str);
-		});
-	});
-});
+app.use(express.static("web"));
 
 //Magnet link endpoint
 app.post("/view/magnet/:href", function(req, res) {
