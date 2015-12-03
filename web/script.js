@@ -70,18 +70,20 @@ form.addEventListener("submit", function(evt) {
 	//Linx if link field is filled
 	if (link.value) {
 		var href = encodeURIComponent(link.value);
-		if (link.indexOf("magnet:") === 0) {
+		if (link.value.indexOf("magnet:") === 0) {
+			overlay("Loading...");
 			post("/view/magnet/"+href, formData, handleResponse);
-		} else if (link.indexOf("youtube.com/watch") !== -1) {
+		} else if (link.value.indexOf("youtube.com/watch") !== -1) {
 			post("/view/youtube/"+href, formData, handleResponse);
+		}
 
 	//Torrent if torrent files are supplied
 	} else if (torrentFile.files.length > 0) {
+		overlay("Loading...");
 		formData.append("file", torrentFile.files[0]);
 		post("/view/torrent", formData, handleResponse);
 
 	} else {
-		overlay("Loading...");
 		return;
 	}
 
