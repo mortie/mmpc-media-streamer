@@ -1,5 +1,5 @@
 {
-	"port": 10100
+	"port": 10100,
 	"host": "localhost",
 	"player_command": "vlc",
 	"player_password": "foo"
