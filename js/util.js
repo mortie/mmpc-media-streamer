@@ -4,6 +4,7 @@ var http = require("http");
 var https = require("https");
 var crypto = require("crypto");
 var exec = require("child_process").spawn;
+var colors = require("colors");
 
 exports.mimeType = mimeType;
 exports.request = request;
@@ -62,7 +63,7 @@ function notify(title, msg) {
 	}
 
 	exec("notify-send", args);
-	console.log("Notification: "+title+(msg ? ": "+msg : ""));
+	console.log(("Notification: "+title+(msg ? ": "+msg : "")).info)
 }
 
 function sha1(str) {

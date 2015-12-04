@@ -1,4 +1,5 @@
 var exec = require("child_process").spawn;
+var colors = require("colors");
 
 module.exports = MediaPlayer;
 
@@ -18,14 +19,14 @@ function MediaPlayer(mediaUrl, subtitlesPath, port, conf) {
 		"vlc://quit"
 	]);
 
-	console.log("player GUI on port "+this.port.val);
+	console.log(("player GUI on port "+this.port.val).ok);
 
 	//Log player output to console
 	child.stdout.on("data", function(data) {
-		console.log("player: "+data.toString().trim());
+		console.log("player(stdout): ".green+data.toString().trim().info);
 	});
 	child.stderr.on("data", function(data) {
-		console.log("player: error: "+data.toString().trim());
+		console.log("player(stderr): ".red+data.toString().trim().info);
 	});
 
 	//Clean up when the player exits

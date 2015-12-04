@@ -4,11 +4,18 @@ var status = require("statuses");
 var formidable = require("formidable");
 var wrench = require("wrench");
 var express = require("express");
+var colors = require("colors");
 
 var util = require("./js/util");
 var HttpStreamer = require("./js/http-streamer");
 var PortManager = require("./js/port-manager");
 var torrentPlayer = require("./js/torrent-player");
+
+colors.setTheme({
+	info: "grey",
+	error: "red",
+	ok: "green"
+});
 
 var conf = JSON.parse(fs.readFileSync("conf.json", "utf8"));
 
@@ -53,4 +60,4 @@ app.post("/view/torrent", function(req, res) {
 
 var port = portManager.getPort();
 app.listen(port.val);
-console.log("Listening to port "+port.val+".");
+console.log(("Listening to port "+port.val+".").ok);
