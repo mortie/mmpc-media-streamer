@@ -3,24 +3,26 @@
 }
 
 body {
-	background-color: #433325;
 	padding: 0px;
+	margin: 0px;
 }
 
 #content {
-	width: 90%;
+	width: 100%;
 	max-width: 800px;
 	margin: auto;
 }
 
 #form {
 	color: #eee;
-	margin-top: 48px;
 	padding: 24px;
 	padding-bottom: calc(24px + 30px);
 	background-color: #7A5029;
 	border-radius: 5px;
 	border: 1px solid black;
+	border-top: none;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
 }
 
 #form dl {
