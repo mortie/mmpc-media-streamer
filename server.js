@@ -9,6 +9,7 @@ var colors = require("colors");
 var util = require("./js/util");
 var HttpStreamer = require("./js/http-streamer");
 var PortManager = require("./js/port-manager");
+var MediaPlayer = require("./js/media-player");
 var torrentPlayer = require("./js/torrent-player");
 
 colors.setTheme({
@@ -40,6 +41,15 @@ app.use(express.static("web"));
 app.post("/view/magnet/:href", function(req, res) {
 	var source = decodeURIComponent(req.params.href);
 	torrentPlayer.play(source, res, portManager, conf);
+});
+
+//URL endpoint
+app.post("/view/url/:href", function(req, res) {
+	var url = decodeURIComponent(req.params.href);
+	var player = new MediaPlayer(url, "", portManager.getPort(), conf);
+	setTimeout(function() {
+		res.json({redirect: "http://"+conf.host+":"+player.port.val});
+	}, 2000);
 });
 
 //Torrent file endpoint

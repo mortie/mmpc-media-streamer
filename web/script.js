@@ -73,8 +73,9 @@ form.addEventListener("submit", function(evt) {
 		if (link.value.indexOf("magnet:") === 0) {
 			overlay("Loading...");
 			post("/view/magnet/"+href, formData, handleResponse);
-		} else if (link.value.indexOf("youtube.com/watch") !== -1) {
-			post("/view/youtube/"+href, formData, handleResponse);
+		} else {
+			overlay("Loading...");
+			post("/view/url/"+href, formData, handleResponse);
 		}
 
 	//Torrent if torrent files are supplied
