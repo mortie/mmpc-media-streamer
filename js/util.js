@@ -3,7 +3,7 @@ var urllib = require("url");
 var http = require("http");
 var https = require("https");
 var crypto = require("crypto");
-var exec = require("child_process").spawn;
+var spawn = require("child_process").spawn;
 var colors = require("colors");
 
 exports.mimeType = mimeType;
@@ -62,7 +62,7 @@ function notify(title, msg) {
 		];
 	}
 
-	exec("notify-send", args);
+	spawn("notify-send", args);
 	console.log(("Notification: "+title+(msg ? ": "+msg : "")).info)
 }
 

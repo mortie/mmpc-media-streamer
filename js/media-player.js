@@ -1,4 +1,4 @@
-var exec = require("child_process").spawn;
+var spawn = require("child_process").spawn;
 var colors = require("colors");
 
 module.exports = MediaPlayer;
@@ -7,7 +7,7 @@ function MediaPlayer(mediaUrl, subtitlesPath, port, conf) {
 	this.port = port;
 
 	//Run player
-	var child = exec(conf.player_command, [
+	var child = spawn(conf.player_command, [
 		"--fullscreen",
 		"--play-and-exit",
 		"-I", "http",
