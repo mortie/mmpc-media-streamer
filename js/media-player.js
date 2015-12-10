@@ -3,21 +3,25 @@ var colors = require("colors");
 
 module.exports = MediaPlayer;
 
-function MediaPlayer(mediaUrl, subtitlesPath, port, conf) {
+function MediaPlayer(mediaUrls, subtitlesPath, port, conf) {
 	this.port = port;
 
+	if (typeof mediaUrls === "string")
+		mediaUrls = [mediaUrls];
+
+	mediaUrls.push("vlc://quit");
+
 	//Run player
-	var child = spawn(conf.player_command, [
+	var options = [
 		"--fullscreen",
 		"--play-and-exit",
 		"-I", "http",
 		"--http-password", conf.player_password,
 		"--http-port", this.port.val,
 		"--sub-file", subtitlesPath,
-		"--",
-		mediaUrl,
-		"vlc://quit"
-	]);
+		"--"
+	].concat(mediaUrls);
+	var child = spawn(conf.player_command, options);
 
 	console.log(("player GUI on port "+this.port.val).ok);
 

@@ -51,6 +51,7 @@ function post(url, payload, cb) {
 var form = q("#form");
 var link = q("#link");
 var torrentFile = q("#torrent-file");
+var subsFile = q("#subs-file");
 
 form.reset();
 
@@ -66,6 +67,9 @@ form.addEventListener("submit", function(evt) {
 	evt.preventDefault();
 
 	var formData = new FormData();
+
+	if (subsFile.files.length > 0)
+		formData.append("subs", subsFile.files[0]);
 
 	//Linx if link field is filled
 	if (link.value) {

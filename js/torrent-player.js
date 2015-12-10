@@ -18,7 +18,7 @@ regexes = {
 	subtitles: new RegExp("("+extensions.subtitles+")$", "i")
 };
 
-function play(source, res, portManager, conf) {
+function play(source, res, subtitlesPath, portManager, conf) {
 	var engine;
 	try {
 		engine = torrentStream(source);
@@ -34,11 +34,15 @@ function play(source, res, portManager, conf) {
 			engine.torrent.name
 		);
 
-		var media = new MediaTorrent(engine);
+		var media = new MediaTorrent(engine, subtitlesPath);
 		var playerPort = media.play(portManager, conf);
-		setTimeout(function() {
-			res.json({redirect: "http://"+conf.host+":"+playerPort.val});
-		}, 2000);
+		if (playerPort) {
+			setTimeout(function() {
+				res.json({redirect: "http://"+conf.host+":"+playerPort.val});
+			}, 2000);
+		} else {
+			res.end();
+		}
 	});
 }
 
@@ -55,31 +59,38 @@ TorrentFile.prototype.makeFile = function() {
 		this.writeStream = fs.createWriteStream(this.path);
 		this.readStream.pipe(this.writeStream);
 	}
-}
+};
 TorrentFile.prototype.cleanup = function() {
 	if (this.file && this.path) {
 		fs.unlink(this.path);
 	}
-}
+};
 
-function MediaTorrent(engine) {
+function MediaTorrent(engine, subtitlesPath) {
 	this.engine = engine;
 	this.files = engine.files;
 
-	var media = undefined;
-	var subtitles = undefined;
+	var media = [];
+	var tSubtitles;
 	this.files.forEach(function(file) {
 		if (regexes.media.test(file.name))
-			media = file;
+			media.push(new TorrentFile(file));
 		else if (regexes.subtitles.test(file.name))
-			subtitles = file;
+			tSubtitles = file;
 		else
 			file.deselect();
 	}.bind(this));
 
-	this.media = new TorrentFile(media);
-	this.subtitles = new TorrentFile(subtitles);
-	this.subtitles.makeFile();
+	this.media = media;
+
+	if (subtitlesPath) {
+		this.subtitles = {path: subtitlesPath};
+	} else if (tSubtitles) {
+		this.subtitles = new TorrentFile(tSubtitles);
+		this.subtitles.makeFile();
+	} else {
+		this.subtitles = "";
+	}
 }
 MediaTorrent.prototype.play = function(portManager, conf) {
 	if (!this.media) {
@@ -87,30 +98,42 @@ MediaTorrent.prototype.play = function(portManager, conf) {
 			"Could not play media.",
 			"Torrent doesn't contain a media file."
 		);
-		this.cleanup();
 		return;
 	}
 
-	var streamer = new HttpStreamer(portManager.getPort(), {
-		name: this.media.file.name,
-		length: this.media.file.length,
-		createReadStream: function(options) {
-			return this.media.file.createReadStream(options);
-		}.bind(this)
+	var streamers = [];
+	var urls = [];
+
+	this.media.forEach(function(torrentFile) {
+		var streamer = new HttpStreamer(portManager.getPort(), {
+			name: torrentFile.file.name,
+			length: torrentFile.file.length,
+			createReadStream: function(options) {
+				return torrentFile.file.createReadStream(options);
+			}.bind(this)
+		});
+		streamers.push(streamer);
+		urls.push("http://localhost:"+streamer.port.val);
 	});
 	this.player = new MediaPlayer(
-		"http://localhost:"+streamer.port.val,
-		"",
+		urls,
+		this.subtitles.path,
 		portManager.getPort(),
 		conf
 	);
 
 	this.player.onexit = function() {
-		streamer.free();
-		this.media.cleanup();
-		this.subtitles.cleanup();
+		streamers.forEach(function(streamer) {
+			streamer.free();
+		});
+		this.media.forEach(function(f) {
+			f.cleanup();
+		});
+		if (this.subtitles.cleanup) {
+			this.subtitles.cleanup();
+		}
 		this.engine.destroy();
 	}.bind(this);
 
 	return this.player.port;
-}
+};
