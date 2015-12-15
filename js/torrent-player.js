@@ -2,6 +2,9 @@ var torrentStream = require("torrent-stream");
 var pathlib = require("path");
 var temp = require("temp");
 var fs = require("fs");
+var crypto = require("crypto");
+var wrench = require("wrench");
+var os = require("os");
 
 var util = require("./util");
 var HttpStreamer = require("./http-streamer");
@@ -19,9 +22,12 @@ regexes = {
 };
 
 function play(source, res, subtitlesPath, portManager, conf) {
+	var id = crypto.randomBytes(16).toString("hex");
 	var engine;
 	try {
-		engine = torrentStream(source);
+		engine = torrentStream(source, {
+			name: "mmpc-"+id
+		});
 	} catch (e) {
 		return res.end({error: "Bad torrent: "+e.toString()});
 	}
@@ -34,7 +40,7 @@ function play(source, res, subtitlesPath, portManager, conf) {
 			engine.torrent.name
 		);
 
-		var media = new MediaTorrent(engine, subtitlesPath);
+		var media = new MediaTorrent(engine, subtitlesPath, id);
 		var playerPort = media.play(portManager, conf);
 		if (playerPort) {
 			setTimeout(function() {
@@ -66,9 +72,10 @@ TorrentFile.prototype.cleanup = function() {
 	}
 };
 
-function MediaTorrent(engine, subtitlesPath) {
+function MediaTorrent(engine, subtitlesPath, id) {
 	this.engine = engine;
 	this.files = engine.files;
+	this.id = id;
 
 	var media = [];
 	var tSubtitles;
@@ -133,6 +140,9 @@ MediaTorrent.prototype.play = function(portManager, conf) {
 			this.subtitles.cleanup();
 		}
 		this.engine.destroy();
+
+		//Clean up temp files
+		wrench.rmdirSyncRecursive(os.tmpdir()+"/mmpc-"+this.id);
 	}.bind(this);
 
 	return this.player.port;
