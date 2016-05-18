@@ -1,6 +1,7 @@
 {
-	"port": 10100,
-	"host": "localhost",
+	"port": 8080,
+	"stream_port": 10100,
+	"player_port": 10101,
 	"player_command": "vlc",
-	"player_password": "foo"
+	"player_password": "lol"
 }
