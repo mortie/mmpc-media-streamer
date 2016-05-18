@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/mortie/mmpc-media-streamer/issues"
   },
-  "homepage": "https://github.com/mortie/mmpc-media-streamer#readme"
+  "homepage": "https://github.com/mortie/mmpc-media-streamer#readme",
+  "dependencies": {
+    "torrent-stream": "^1.0.3"
+  }
 }
