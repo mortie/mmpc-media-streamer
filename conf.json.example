@@ -3,5 +3,7 @@
 	"stream_port": 10100,
 	"player_port": 10101,
 	"player_command": "vlc",
-	"player_password": "lol"
+	"player_password": "lol",
+	"subtitles": true,
+	"subs_lang": "en"
 }
