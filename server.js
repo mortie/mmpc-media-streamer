@@ -3,11 +3,11 @@ var urllib = require("url");
 var http = require("http");
 var fs = require("fs");
 var OpenSubs = require("opensubtitles-api");
-var Server = require("./kattie");
+var ProxyServer = require("./js/kickass-proxy");
 
 var conf = JSON.parse(fs.readFileSync("conf.json"));
 
-var server = Server({ port: conf.port, streamPort: conf.stream_port });
+var server = ProxyServer({ port: conf.port, streamPort: conf.stream_port });
 var subs = new OpenSubs({ useragent: "OSTestUserAgent" });
 
 function findSubs(media, cb) {

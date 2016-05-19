@@ -1,0 +1,42 @@
+<script>
+(function() {
+	var buttongroup = document.querySelectorAll(".downloadButtonGroup > a");
+	var magnet;
+	if (buttongroup[2])
+		magnet = buttongroup[2].href;
+
+	function addStreamButton() {
+		var button = document.createElement("button");
+		button.innerHTML = "Stream";
+		button.style =
+			"position: fixed;"+
+			"bottom: 12px;"+
+			"right: 12px;"+
+			"z-index: 2147483647;"+
+			"background: white;"+
+			"box-shadow: 0px 2px 5px 5px;"+
+			"cursor: pointer;"+
+			"padding: 12px;";
+
+		document.body.appendChild(button);
+
+		button.addEventListener("click", function(evt) {
+			location.href = "/_stream/"+magnet;
+		});
+	}
+
+	if (magnet)
+		addStreamButton();
+})();
+</script>
+
+<style>
+	@font-face {
+		font-family: katfont;
+		src: url(/_kastatic/fonts/katfont-Regular-v2.woff);
+	}
+	.sidebarCell,
+	.spareBlock.hzSpare {
+		display: none !important
+	}
+</style>
