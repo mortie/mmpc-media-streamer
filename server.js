@@ -53,6 +53,7 @@ server.onstream = function(media, req, res) {
 			"--fullscreen",
 			"--play-and-exit",
 			"-I", "http",
+			"--extraintf", "qt",
 			"--http-port", conf.player_port,
 			"--http-password", "media"
 		];
