@@ -33,7 +33,6 @@ function readRes(res, cb) {
 var staticCache = {};
 function proxyStatic(inreq, inres) {
 	if (staticCache[inreq.url]) {
-		console.log("reading "+inreq.url+" from cache");
 		return inres.end(staticCache[inreq.url]);
 	}
 
@@ -133,13 +132,18 @@ function Server(conf) {
 			req.url = req.url.substring("/_kastatic".length);
 			proxyStatic(req, res);
 		} else if (req.url.indexOf("/_stream") === 0) {
-			streamer.stream(req.url.substring("/_stream/".length), (media) => {
+			var url = req.url.substring("/_stream".length);
+			streamer.stream(url, (err, media) => {
+				if (err) {
+					return console.trace(err);
+				}
 				self.onstream(media, req, res);
 			});
 		} else {
 			proxy(req, res);
 		}
 	}).listen(conf.port);
+	console.log("Server running on port "+conf.port+".");
 
 	return self;
 }

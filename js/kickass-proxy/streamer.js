@@ -31,7 +31,14 @@ function Streamer(port) {
 		media = null;
 		uploaded = 0;
 		clearInterval(interval);
-		engine = torrentStream(magnet);
+		console.log(magnet);
+		try {
+			engine = torrentStream(magnet, {
+				tmp: "tmp"
+			});
+		} catch (err) {
+			cb(err);
+		}
 
 		engine.on("ready", () => {
 			engine.files.forEach(file => {
@@ -50,7 +57,7 @@ function Streamer(port) {
 				}
 			}
 
-			cb(media);
+			cb(null, media);
 		});
 	}
 
