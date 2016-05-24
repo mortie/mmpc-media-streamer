@@ -5,11 +5,12 @@ var fs = require("fs");
 var pathlib = require("path");
 var OpenSubs = require("opensubtitles-api");
 var ProxyServer = require("./js/kickass-proxy");
+var heapdump = require("heapdump");
 
 var conf = JSON.parse(fs.readFileSync("conf.json"));
 
 var server = ProxyServer({ port: conf.port, streamPort: conf.stream_port });
-var subs = new OpenSubs({ useragent: "OSTestUserAgent" });
+var subs = new OpenSubs({ useragent: "mmpc-media-streamer" });
 
 var isApp = process.argv[2] === "app";
 if (isApp)
@@ -136,6 +137,12 @@ server.onstream = function(media, req, res) {
 				res.end();
 			}, 1000);
 		}
+
+		// Heapdump
+		setTimeout(() => {
+			heapdump.writeSnapshot(Date.now()+".heapsnapshot");
+			console.log("snapshot written.");
+		}, 400000);
 	});
 }
 
